@@ -1,10 +1,15 @@
 package com.algaworks.ecommerce.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -25,7 +30,12 @@ public class Categoria {
 	
 	private String nome;
 	
-	@Column(name = "categoria_pai_id")
-	private Integer categoriaPaiId;
+	@ManyToOne
+	@JoinColumn(name = "categoria_pai_id")
+	private Categoria categoriaPai;
+	
+	@Column(name = "categorias")
+	@OneToMany(mappedBy = "categoriaPai")
+	private List<Categoria> categoriasFilha;
 	
 }

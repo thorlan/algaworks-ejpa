@@ -2,6 +2,7 @@ package com.algaworks.ecommerce.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -11,6 +12,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -45,5 +49,12 @@ public class Pedido {
 	
 	@Embedded
 	private Endereco enderecoEntrega;
+	
+	@ManyToOne
+	@JoinColumn(name = "cliente_id")
+	private Cliente cliente;
+	
+	@OneToMany(mappedBy = "pedido")
+	private List<ItemPedido> itemPedido;
 	
 }
