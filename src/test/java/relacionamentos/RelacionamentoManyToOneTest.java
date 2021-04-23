@@ -38,7 +38,7 @@ public class RelacionamentoManyToOneTest extends EntityManagerTest{
 		Assert.assertNotNull(pedidoVerificacao.getCliente());
 	}
 	
-	@Test
+	//@Test
 	public void verificaRelacionamentoItemPedido() {
 		Cliente cliente = entityManager.find(Cliente.class, 1);
 		Produto produto = entityManager.find(Produto.class, 1);

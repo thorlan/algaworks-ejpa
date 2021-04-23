@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -39,8 +40,8 @@ public class Pedido {
 	@Column(name = "data_conclusao")
 	public LocalDateTime dataConclusao;
 	
-	@Column(name = "nota_fiscal_id")
-	public Integer notaFiscalId;
+	@OneToOne(mappedBy = "pedido")
+	public NotaFiscal notaFiscal;
 	
 	public BigDecimal total;
 	
@@ -50,11 +51,14 @@ public class Pedido {
 	@Embedded
 	private Endereco enderecoEntrega;
 	
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
 	
 	@OneToMany(mappedBy = "pedido")
-	private List<ItemPedido> itemPedido;
+	private List<ItemPedido> itens;
+	
+	@OneToOne(mappedBy = "pedido")
+	private PagamentoCartao pagamentoCartao;
 	
 }
