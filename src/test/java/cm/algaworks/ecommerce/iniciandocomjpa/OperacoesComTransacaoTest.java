@@ -64,7 +64,7 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 		
 		entityManager.clear();
 		
-		Produto produtoVerificacaMerge = entityManager.find(Produto.class, produtoMerge.getId());
+		//Produto produtoVerificacaMerge = entityManager.find(Produto.class, produtoMerge.getId());
 		
 		//Assert.assertEquals(produtoMerge.getNome(), produtoVerificacaMerge.getNome());
 	}
@@ -168,7 +168,6 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 		
 		entityManager.getTransaction().begin();
 		
-		Produto produto = new Produto();
 		
 //		entityManager.persist(produto);
 //		entityManager.merge(produto);

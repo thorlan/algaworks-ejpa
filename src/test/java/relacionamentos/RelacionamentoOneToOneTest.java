@@ -17,20 +17,21 @@ public class RelacionamentoOneToOneTest extends EntityManagerTest{
 	@Test
 	public void verificaRelacionamento() {
 		
+		entityManager.getTransaction().begin();
+		
 		Pedido pedido = entityManager.find(Pedido.class, 1);
 		PagamentoCartao pagamentoCartao = new PagamentoCartao();
 		pagamentoCartao.setNumero("1234");
 		pagamentoCartao.setStatus(StatusPagamento.PROCESSANDO);
 		pagamentoCartao.setPedido(pedido);
 		
-		entityManager.getTransaction().begin();
 		entityManager.persist(pagamentoCartao);
 		entityManager.getTransaction().commit();
 		entityManager.clear();
 		
 		Pedido pedidoVerificacao = entityManager.find(Pedido.class, pedido.getId());
 		
-		Assert.assertNotNull(pedidoVerificacao.getPagamentoCartao());
+		Assert.assertNotNull(pedidoVerificacao.getPagamento());
 	}
 	
 	@Test

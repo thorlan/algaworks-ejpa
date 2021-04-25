@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.algaworks.ecommerce.model.Categoria;
-import com.algaworks.ecommerce.model.Pedido;
 
 import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
 
