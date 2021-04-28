@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -34,7 +35,8 @@ public class NotaFiscal {
 //				inverseJoinColumns = @JoinColumn(name = "pedido_id", unique = true))
 	private Pedido pedido;
 	
-	private String xml;
+	@Lob
+	private byte[] xml;
 	
 	@Column(name = "data_emissao")
 	private Date dataEmissao;
