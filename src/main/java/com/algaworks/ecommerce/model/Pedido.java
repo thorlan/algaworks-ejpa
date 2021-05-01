@@ -43,7 +43,7 @@ public class Pedido extends EntitadeBaseInteger {
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
 
-    @Column(name = "data_criacao", updatable = false)
+    @Column(name = "data_criacao", updatable = false, nullable = false)
     private LocalDateTime dataCriacao;
 
     @Column(name = "data_ultima_atualizacao", insertable = false)
@@ -55,8 +55,10 @@ public class Pedido extends EntitadeBaseInteger {
     @OneToOne(mappedBy = "pedido")
     private NotaFiscal notaFiscal;
 
+    @Column(precision = 19, scale = 2, nullable = false)
     private BigDecimal total;
 
+    @Column(length =  30, nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
 
@@ -64,7 +66,7 @@ public class Pedido extends EntitadeBaseInteger {
     private Pagamento pagamento;
 
     @Embedded
-    private Endereco enderecoEntrega;
+    private EnderecoEntregaPedido enderecoEntregaPedido;
 
 //    @PrePersist
 //    @PreUpdate

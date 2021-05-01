@@ -15,18 +15,18 @@ public class RelacionamentoManyToManyTest extends EntityManagerTest{
 	@Test
 	public void verificaRelacionamento() {
 		
-		Produto produto = entityManager.find(Produto.class, 1);
-		Categoria categoria = entityManager.find(Categoria.class, 1);
+		Produto produto = em.find(Produto.class, 1);
+		Categoria categoria = em.find(Categoria.class, 1);
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
 		//categoria.setProdutos(Arrays.asList(produto));
 		produto.setCategorias(Arrays.asList(categoria));
 		
-		entityManager.getTransaction().commit();
-		entityManager.clear();
+		em.getTransaction().commit();
+		em.clear();
 		
-		Categoria categoriaVerificacao = entityManager.find(Categoria.class, categoria.getId());
+		Categoria categoriaVerificacao = em.find(Categoria.class, categoria.getId());
 		
 		Assert.assertFalse(categoriaVerificacao.getProdutos().isEmpty());
 	}

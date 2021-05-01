@@ -20,11 +20,11 @@ import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
 
 public class SalvandoArquivoTest extends EntityManagerTest {
 
-	@Test
+	//@Test
 	public void inserirPagamento() {
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 
-		Pedido pedido = entityManager.find(Pedido.class, 1);
+		Pedido pedido = em.find(Pedido.class, 1);
 
 		NotaFiscal notaFiscal = new NotaFiscal();
 		// notaFiscal.setId(pedido.getId());
@@ -32,11 +32,11 @@ public class SalvandoArquivoTest extends EntityManagerTest {
 		notaFiscal.setDataEmissao(new Date());
 		notaFiscal.setXml(carregarNotaFiscal());
 
-		entityManager.persist(notaFiscal);
-		entityManager.getTransaction().commit();
-		entityManager.clear();
+		em.persist(notaFiscal);
+		em.getTransaction().commit();
+		em.clear();
 
-		NotaFiscal notaFiscalVerificacao = entityManager.find(NotaFiscal.class, notaFiscal.getId());
+		NotaFiscal notaFiscalVerificacao = em.find(NotaFiscal.class, notaFiscal.getId());
 		Assert.assertNotNull(notaFiscalVerificacao.getXml());
 		Assert.assertTrue(notaFiscalVerificacao.getXml().length > 0);
 
@@ -58,19 +58,19 @@ public class SalvandoArquivoTest extends EntityManagerTest {
 		}
 	}
 
-	@Test
+	//@Test
 	public void salvarFotoProduto() {
 		
-		entityManager.getTransaction().begin();
-		Produto produto = entityManager.find(Produto.class, 3);
+		em.getTransaction().begin();
+		Produto produto = em.find(Produto.class, 3);
 		produto.setAtributos((Arrays.asList(new Atributo("tela", "520x800"))));
 		produto.setFoto(carregaFoto());
 		
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 
-		Produto produtoVerificacao = entityManager.find(Produto.class, produto.getId());
+		Produto produtoVerificacao = em.find(Produto.class, produto.getId());
 		
 		Assert.assertNotNull(produtoVerificacao.getFoto());
 		Assert.assertTrue(produtoVerificacao.getFoto().length > 0);

@@ -12,8 +12,8 @@ public class GerenciamentoTransacoesTest extends EntityManagerTest {
 	//@Test
 	public void abrirFecharCancelarTransacao() {
 
-		Pedido pedido = entityManager.find(Pedido.class, 1);
-		entityManager.getTransaction().begin();
+		Pedido pedido = em.find(Pedido.class, 1);
+		em.getTransaction().begin();
 
 //		pedido.setStatus(StatusPedido.PAGO);
 //		
@@ -28,7 +28,7 @@ public class GerenciamentoTransacoesTest extends EntityManagerTest {
 			pedido.setStatus(StatusPedido.PAGO);
 		}
 
-		entityManager.getTransaction().rollback();
+		em.getTransaction().rollback();
 
 	}
 	
@@ -37,18 +37,18 @@ public class GerenciamentoTransacoesTest extends EntityManagerTest {
 	@Test(expected = Exception.class)
 	public void abrirFecharCancelarTransacaoMetodoProfissional() {
 		try {
-			entityManager.getTransaction().begin();
+			em.getTransaction().begin();
 			regraDeNegocio();
-			entityManager.getTransaction().commit();
+			em.getTransaction().commit();
 		} catch (Exception e) {
-			entityManager.getTransaction().rollback();
+			em.getTransaction().rollback();
 			throw e;
 		}
 
 	}
 	
 	private void regraDeNegocio() {
-		Pedido pedido = entityManager.find(Pedido.class, 1);
+		Pedido pedido = em.find(Pedido.class, 1);
 		pedido.setStatus(StatusPedido.PAGO);
 		if (pedido.getPagamento() == null) {
 			throw new RuntimeException("O pagamento não deve ser null");

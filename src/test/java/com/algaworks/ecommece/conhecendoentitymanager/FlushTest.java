@@ -16,9 +16,9 @@ public class FlushTest extends EntityManagerTest{
 	public void chamarFlush() {
 		
 		try {
-			entityManager.getTransaction().begin();
+			em.getTransaction().begin();
 			
-			Pedido pedido = entityManager.find(Pedido.class, 1);
+			Pedido pedido = em.find(Pedido.class, 1);
 			pedido.setStatus(StatusPedido.PAGO);
 			
 			//com o flush o pedido vai para o banco mesmo que ocorra a exception! flush força ida ao banco!
@@ -31,10 +31,10 @@ public class FlushTest extends EntityManagerTest{
 				throw new RuntimeException("Pedido ainda não foi pago.");
 			}
 			
-			entityManager.getTransaction().commit();
+			em.getTransaction().commit();
 			
 		} catch (Exception e) {
-			entityManager.getTransaction().rollback();
+			em.getTransaction().rollback();
 			throw e;
 		}
 		

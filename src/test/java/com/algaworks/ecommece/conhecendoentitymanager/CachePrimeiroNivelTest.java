@@ -11,7 +11,7 @@ public class CachePrimeiroNivelTest extends EntityManagerTest{
 	@Test
 	public void verificaCache() {
 		
-		Produto produto = entityManager.find(Produto.class, 1);
+		Produto produto = em.find(Produto.class, 1);
 		
 		System.out.println(produto.getNome());
 		
@@ -19,7 +19,7 @@ public class CachePrimeiroNivelTest extends EntityManagerTest{
 		//ve que o produto de id 1 ja esta na memoria e nao faz duas consultas
 		
 		
-		Produto produtoResgatado = entityManager.find(Produto.class, produto.getId());
+		Produto produtoResgatado = em.find(Produto.class, produto.getId());
 		System.out.println(produtoResgatado.getNome());
 		
 		System.out.println("--------------------------");

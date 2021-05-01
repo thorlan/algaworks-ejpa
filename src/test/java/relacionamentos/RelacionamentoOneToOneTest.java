@@ -17,19 +17,19 @@ public class RelacionamentoOneToOneTest extends EntityManagerTest{
 	@Test
 	public void verificaRelacionamento() {
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
-		Pedido pedido = entityManager.find(Pedido.class, 1);
+		Pedido pedido = em.find(Pedido.class, 1);
 		PagamentoCartao pagamentoCartao = new PagamentoCartao();
 		pagamentoCartao.setNumeroCartao("1234");
 		pagamentoCartao.setStatus(StatusPagamento.PROCESSANDO);
 		pagamentoCartao.setPedido(pedido);
 		
-		entityManager.persist(pagamentoCartao);
-		entityManager.getTransaction().commit();
-		entityManager.clear();
+		em.persist(pagamentoCartao);
+		em.getTransaction().commit();
+		em.clear();
 		
-		Pedido pedidoVerificacao = entityManager.find(Pedido.class, pedido.getId());
+		Pedido pedidoVerificacao = em.find(Pedido.class, pedido.getId());
 		
 		Assert.assertNotNull(pedidoVerificacao.getPagamento());
 	}
@@ -37,18 +37,19 @@ public class RelacionamentoOneToOneTest extends EntityManagerTest{
 	@Test
 	public void verificaRelacionamentoPedidoNotaFiscal() {
 		
-		Pedido pedido = entityManager.find(Pedido.class, 1);
+		Pedido pedido = em.find(Pedido.class, 1);
 		NotaFiscal nota = new NotaFiscal();
-		//nota.setXml("TESTE");
+		nota.setXml("TESTE".getBytes());
 		nota.setDataEmissao(new Date());
 		nota.setPedido(pedido);
+		nota.setDataEmissao(new Date());
 		
-		entityManager.getTransaction().begin();
-		entityManager.persist(nota);
-		entityManager.getTransaction().commit();
-		entityManager.clear();
+		em.getTransaction().begin();
+		em.persist(nota);
+		em.getTransaction().commit();
+		em.clear();
 		
-		Pedido pedidoVerificacao = entityManager.find(Pedido.class, pedido.getId());
+		Pedido pedidoVerificacao = em.find(Pedido.class, pedido.getId());
 		
 		Assert.assertNotNull(pedidoVerificacao.getNotaFiscal());
 	}

@@ -15,14 +15,15 @@ public class MapeandoEnumeracoesTest extends EntityManagerTest {
 		Cliente cliente = new Cliente();
 		cliente.setNome("José");
 		cliente.setSexo(SexoCliente.MASCULINO);
+		cliente.setCpf("1234");
 		
-		entityManager.getTransaction().begin();
-		entityManager.persist(cliente);
-		entityManager.getTransaction().commit();
+		em.getTransaction().begin();
+		em.persist(cliente);
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Cliente clienteVerificacao = entityManager.find(Cliente.class, cliente.getId());
+		Cliente clienteVerificacao = em.find(Cliente.class, cliente.getId());
 		
 		Assert.assertNotNull(clienteVerificacao);
 		

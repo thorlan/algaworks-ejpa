@@ -13,7 +13,7 @@ public class EntityManagerTest {
 
 	protected static EntityManagerFactory entityManagerFactory;
 
-	protected EntityManager entityManager;
+	protected EntityManager em;
 
 	// uma vez na classe, ao iniciar
 	@BeforeClass
@@ -30,13 +30,13 @@ public class EntityManagerTest {
 	// antes de cada teste
 	@Before
 	public void setUp() {
-		entityManager = entityManagerFactory.createEntityManager();
+		em = entityManagerFactory.createEntityManager();
 	}
 
 	// após de cada teste
 	@After
 	public void tearDown() {
-		entityManager.close();
+		em.close();
 	}
 	
 }

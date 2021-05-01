@@ -9,6 +9,7 @@ import com.algaworks.ecommerce.model.Cliente;
 import com.algaworks.ecommerce.model.Pagamento;
 import com.algaworks.ecommerce.model.PagamentoCartao;
 import com.algaworks.ecommerce.model.Pedido;
+import com.algaworks.ecommerce.model.SexoCliente;
 import com.algaworks.ecommerce.model.StatusPagamento;
 
 import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
@@ -19,20 +20,22 @@ public class HerancaTest extends EntityManagerTest {
     public void salvarCliente() {
         Cliente cliente = new Cliente();
         cliente.setNome("Fernanda Morais");
+        cliente.setCpf("1234");
+        cliente.setSexo(SexoCliente.FEMININO);
 
-        entityManager.getTransaction().begin();
-        entityManager.persist(cliente);
-        entityManager.getTransaction().commit();
+        em.getTransaction().begin();
+        em.persist(cliente);
+        em.getTransaction().commit();
 
-        entityManager.clear();
+        em.clear();
 
-        Cliente clienteVerificacao = entityManager.find(Cliente.class, cliente.getId());
+        Cliente clienteVerificacao = em.find(Cliente.class, cliente.getId());
         Assert.assertNotNull(clienteVerificacao.getId());
     }
 
     @Test
     public void buscarPagamentos() {
-        List<Pagamento> pagamentos = entityManager
+        List<Pagamento> pagamentos = em
                 .createQuery("select p from Pagamento p")
                 .getResultList();
 
@@ -41,20 +44,20 @@ public class HerancaTest extends EntityManagerTest {
 
     @Test
     public void incluirPagamentoPedido() {
-        Pedido pedido = entityManager.find(Pedido.class, 1);
+        Pedido pedido = em.find(Pedido.class, 1);
 
         PagamentoCartao pagamentoCartao = new PagamentoCartao();
         pagamentoCartao.setPedido(pedido);
         pagamentoCartao.setStatus(StatusPagamento.PROCESSANDO);
         pagamentoCartao.setNumeroCartao("123");
 
-        entityManager.getTransaction().begin();
-        entityManager.persist(pagamentoCartao);
-        entityManager.getTransaction().commit();
+        em.getTransaction().begin();
+        em.persist(pagamentoCartao);
+        em.getTransaction().commit();
 
-        entityManager.clear();
+        em.clear();
 
-        Pedido pedidoVerificacao = entityManager.find(Pedido.class, pedido.getId());
+        Pedido pedidoVerificacao = em.find(Pedido.class, pedido.getId());
         Assert.assertNotNull(pedidoVerificacao.getPagamento());
     }
 

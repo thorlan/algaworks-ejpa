@@ -18,10 +18,10 @@ public class ChaveCompostaTest extends EntityManagerTest{
 
 	@Test
 	public void salvarItem() {
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
-		Cliente cliente = entityManager.find(Cliente.class, 1);
-		Produto produto = entityManager.find(Produto.class, 1);
+		Cliente cliente = em.find(Cliente.class, 1);
+		Produto produto = em.find(Produto.class, 1);
 		
 		Pedido pedido = new Pedido();
 		pedido.setCliente(cliente);
@@ -29,9 +29,9 @@ public class ChaveCompostaTest extends EntityManagerTest{
 		pedido.setStatus(StatusPedido.AGUARDANDO);
 		pedido.setTotal(produto.getPreco());
 
-		entityManager.persist(pedido);
+		em.persist(pedido);
 		
-		entityManager.flush();
+		em.flush();
 		
 		ItemPedido itemPedido = new ItemPedido();
 		//setar produtoId e pepdidoId vai dar cagada quando rodar?
@@ -41,20 +41,20 @@ public class ChaveCompostaTest extends EntityManagerTest{
 		itemPedido.setPrecoProduto(produto.getPreco());
 		itemPedido.setQuantidade(1);
 		
-		entityManager.persist(itemPedido);
+		em.persist(itemPedido);
 		
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Pedido pedidoVerificacao = entityManager.find(Pedido.class, pedido.getId());
+		Pedido pedidoVerificacao = em.find(Pedido.class, pedido.getId());
 		Assert.assertNotNull(pedidoVerificacao);
 		Assert.assertFalse(pedidoVerificacao.getItens().isEmpty());
 	}
 	
 	@Test
 	public void buscarItem() {
-		ItemPedido itemPedido = entityManager.find(ItemPedido.class, new ItemPedidoId(1,1));
+		ItemPedido itemPedido = em.find(ItemPedido.class, new ItemPedidoId(1,1));
 		Assert.assertNotNull(itemPedido);
 	}
 }

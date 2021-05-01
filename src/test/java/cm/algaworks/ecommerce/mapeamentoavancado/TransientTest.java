@@ -11,7 +11,7 @@ public class TransientTest extends EntityManagerTest{
 
 	@Test
 	public void validarPrimeiroNome() {
-		Cliente cliente = entityManager.find(Cliente.class, 1);
+		Cliente cliente = em.find(Cliente.class, 1);
 		Assert.assertEquals("Fernando" , cliente.getPrimeiroNome());
 	}
 	

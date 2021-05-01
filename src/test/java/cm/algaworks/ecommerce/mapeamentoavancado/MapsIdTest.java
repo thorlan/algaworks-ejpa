@@ -1,5 +1,6 @@
 package cm.algaworks.ecommerce.mapeamentoavancado;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.junit.Assert;
@@ -14,21 +15,21 @@ public class MapsIdTest extends EntityManagerTest{
 
 	@Test
 	public void inserirPagamento() {
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
-		Pedido pedido = entityManager.find(Pedido.class, 1);
+		Pedido pedido = em.find(Pedido.class, 1);
 		
 		NotaFiscal notaFiscal = new NotaFiscal();
 		//notaFiscal.setId(pedido.getId());
 		notaFiscal.setPedido(pedido);
 		notaFiscal.setDataEmissao(new Date());
-		//notaFiscal.setXml("<xml/>");
+		notaFiscal.setXml("<xml/>".getBytes());
 		
-		entityManager.persist(notaFiscal);
-		entityManager.getTransaction().commit();
-		entityManager.clear();
+		em.persist(notaFiscal);
+		em.getTransaction().commit();
+		em.clear();
 		
-		NotaFiscal notaFiscalVerificacao = entityManager.find(NotaFiscal.class, notaFiscal.getId());
+		NotaFiscal notaFiscalVerificacao = em.find(NotaFiscal.class, notaFiscal.getId());
 		Assert.assertNotNull(notaFiscalVerificacao);
 		Assert.assertEquals(pedido.getId(), notaFiscalVerificacao.getId());
 	}

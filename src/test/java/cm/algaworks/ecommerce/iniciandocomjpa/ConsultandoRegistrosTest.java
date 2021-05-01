@@ -9,7 +9,7 @@ public class ConsultandoRegistrosTest extends EntityManagerTest {
 	
 	@Test
 	public void buscarPrIdentificador() {
-		Produto produto = entityManager.find(Produto.class, 1);
+		Produto produto = em.find(Produto.class, 1);
 		
 		Assert.assertNotNull(produto);
 		Assert.assertEquals("Kindle", produto.getNome());
@@ -17,11 +17,11 @@ public class ConsultandoRegistrosTest extends EntityManagerTest {
 	
 	@Test
 	public void atualizarAReferencia() {
-		Produto produto = entityManager.find(Produto.class, 1);
+		Produto produto = em.find(Produto.class, 1);
 		produto.setNome("Microfone Samson");
 		
 		//atualiza a referencia, busca do banco novamente!
-		entityManager.refresh(produto);
+		em.refresh(produto);
 		
 		Assert.assertEquals("Kindle", produto.getNome());
 	}

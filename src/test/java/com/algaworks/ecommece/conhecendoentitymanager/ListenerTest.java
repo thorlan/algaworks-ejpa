@@ -1,5 +1,8 @@
 package com.algaworks.ecommece.conhecendoentitymanager;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,26 +16,27 @@ public class ListenerTest extends EntityManagerTest{
 	
 	@Test
 	public void acionarCallBacks() {
-		Cliente cliente = entityManager.find(Cliente.class, 1);
+		Cliente cliente = em.find(Cliente.class, 1);
 		
 		Pedido pedido = new Pedido();
 		pedido.setCliente(cliente);
 		pedido.setStatus(StatusPedido.AGUARDANDO);
+		pedido.setDataCriacao(LocalDateTime.now());
+		pedido.setTotal(BigDecimal.ONE);
 		
+		em.getTransaction().begin();
 		
-		entityManager.getTransaction().begin();
+		em.persist(pedido);
 		
-		entityManager.persist(pedido);
-		
-		entityManager.flush();
+		em.flush();
 		
 		pedido.setStatus(StatusPedido.PAGO);
 		
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Pedido pedidoVerificacao = entityManager.find(Pedido.class, pedido.getId());
+		Pedido pedidoVerificacao = em.find(Pedido.class, pedido.getId());
 		
 		Assert.assertNotNull(pedidoVerificacao.getDataCriacao());
 		Assert.assertNotNull(pedidoVerificacao.getDataUltimaAtualizacao());

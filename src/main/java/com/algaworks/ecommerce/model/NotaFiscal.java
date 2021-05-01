@@ -28,8 +28,9 @@ public class NotaFiscal extends EntitadeBaseInteger{
 	private Pedido pedido;
 	
 	@Lob
+	@Column(columnDefinition = "longblob", nullable = false)
 	private byte[] xml;
 	
-	@Column(name = "data_emissao")
+	@Column(name = "data_emissao", columnDefinition = "datetime(6)", nullable = false)
 	private Date dataEmissao;
 }

@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.algaworks.ecommerce.model.Cliente;
-import com.algaworks.ecommerce.model.Endereco;
+import com.algaworks.ecommerce.model.EnderecoEntregaPedido;
 import com.algaworks.ecommerce.model.Pedido;
 import com.algaworks.ecommerce.model.StatusPedido;
 
@@ -16,14 +16,14 @@ public class MapeamentoObjetoEmbutido extends EntityManagerTest {
 	@Test
 	public void analisaMapeamentoObjetoEmbutido() { 
 		
-		Cliente cliente = entityManager.find(Cliente.class, 1);
+		Cliente cliente = em.find(Cliente.class, 1);
 		
-		Endereco endereco = new Endereco();
+		EnderecoEntregaPedido endereco = new EnderecoEntregaPedido();
 		endereco.setBairro("Neves");
 		endereco.setCep("24425-300");
 		endereco.setCidade("São Gonçalo");
 		endereco.setComplemento("-");
-		endereco.setEstado("Rio de Janeiro");
+		endereco.setEstado("RJ");
 		endereco.setLogradouro("Rua Mauricio de Abreu");
 		endereco.setNumero("10000000");
 		
@@ -31,20 +31,21 @@ public class MapeamentoObjetoEmbutido extends EntityManagerTest {
 		pedido.setDataCriacao(LocalDateTime.now());
 		pedido.setStatus(StatusPedido.AGUARDANDO);
 		pedido.setTotal(new BigDecimal(1000));
+		pedido.setDataCriacao(LocalDateTime.now());
 		
-		pedido.setEnderecoEntrega(endereco);
+		pedido.setEnderecoEntregaPedido(endereco);
 		
 		pedido.setCliente(cliente);
 		
-		entityManager.getTransaction().begin();
-		entityManager.persist(pedido);
-		entityManager.getTransaction().commit();
+		em.getTransaction().begin();
+		em.persist(pedido);
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Pedido pedidoVerificacao = entityManager.find(Pedido.class, pedido.getId());
+		Pedido pedidoVerificacao = em.find(Pedido.class, pedido.getId());
 		
-		Assert.assertEquals(pedido.getEnderecoEntrega().getBairro(), pedidoVerificacao.getEnderecoEntrega().getBairro());
+		Assert.assertEquals(pedido.getEnderecoEntregaPedido().getBairro(), pedidoVerificacao.getEnderecoEntregaPedido().getBairro());
 	}
 	
 	

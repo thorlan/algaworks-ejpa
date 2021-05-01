@@ -19,13 +19,14 @@ public class SecondaryTableTest extends EntityManagerTest{
 		cliente.setNome("Carlos Finotti");
 		cliente.setSexo(SexoCliente.MASCULINO);
 		cliente.setDataNascimento(LocalDate.of(1990, 1, 1));
+		cliente.setCpf("1234");
 		
-		entityManager.getTransaction().begin();
-		entityManager.persist(cliente);
-		entityManager.getTransaction().commit();
-		entityManager.clear();
+		em.getTransaction().begin();
+		em.persist(cliente);
+		em.getTransaction().commit();
+		em.clear();
 		
-		Cliente clienteVerificacao = entityManager.find(Cliente.class, cliente.getId());
+		Cliente clienteVerificacao = em.find(Cliente.class, cliente.getId());
 		Assert.assertNotNull(clienteVerificacao.getSexo());
 		Assert.assertEquals(clienteVerificacao.getSexo(), SexoCliente.MASCULINO);
 	}

@@ -1,6 +1,7 @@
 package cm.algaworks.ecommerce.iniciandocomjpa;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,17 +13,17 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 	@Test
 	public void impedirOperacaoComBancoDeDados() { 
 		
-		Produto produto = entityManager.find(Produto.class, 1);
+		Produto produto = em.find(Produto.class, 1);
 		String nome = produto.getNome();
-		entityManager.detach(produto); //o em deixa de gerenciar o estado do objeto, desanexa
+		em.detach(produto); //o em deixa de gerenciar o estado do objeto, desanexa
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		produto.setNome("Kindle Paperwhite 2 Geração");
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Produto produtoVerificacao = entityManager.find(Produto.class, 1);
+		Produto produtoVerificacao = em.find(Produto.class, 1);
 		
 		Assert.assertEquals(nome, produtoVerificacao.getNome());
 		Assert.assertNotNull(produtoVerificacao.getPreco());
@@ -35,16 +36,17 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 		produtoPersist.setNome("Smartphone One Plus");
 		produtoPersist.setDescricao("O processador mais rápido.");
 		produtoPersist.setPreco(new BigDecimal(2000));
+		produtoPersist.setDataCriacao(LocalDateTime.now());
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
-		entityManager.persist(produtoPersist);
+		em.persist(produtoPersist);
 		produtoPersist.setNome("Smartphone Two Plus");
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Produto produtoVerificacao = entityManager.find(Produto.class, produtoPersist.getId());
+		Produto produtoVerificacao = em.find(Produto.class, produtoPersist.getId());
 		
 		Assert.assertEquals(produtoPersist.getNome(), produtoVerificacao.getNome());
 		
@@ -55,14 +57,15 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 		produtoMerge.setNome("Smartphone 3 Plus");
 		produtoMerge.setDescricao("O processador mais rápido3x.");
 		produtoMerge.setPreco(new BigDecimal(2000));
+		produtoMerge.setDataCriacao(LocalDateTime.now());
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
-		entityManager.merge(produtoMerge);
+		em.merge(produtoMerge);
 		produtoMerge.setNome("Smartphone 4 Plus");  //NOME NAO É ATUALIZADO NO BANCO DE DADOS!!!! O MERGE NAO USA UMA INSTANCIA GERENCIADA!
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
 		//Produto produtoVerificacaMerge = entityManager.find(Produto.class, produtoMerge.getId());
 		
@@ -79,31 +82,31 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 		produto.setDescricao("A melhor qualidade de som");
 		produto.setPreco(new BigDecimal(1000));
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
-		entityManager.merge(produto);
+		em.merge(produto);
 		
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Produto produtoVerificaca = entityManager.find(Produto.class, produto.getId());
+		Produto produtoVerificaca = em.find(Produto.class, produto.getId());
 		
 		Assert.assertEquals(produto.getNome(), produtoVerificaca.getNome());
 	}
 	
 	@Test
 	public void atualizarObjetoGerenciado() {
-		Produto produto = entityManager.find(Produto.class, 1);
+		Produto produto = em.find(Produto.class, 1);
 		produto.setNome("Kindle Paperwhite 2 Geração");
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		//nao preciso do merge, ja esta sendo gerenciado pelo EM com o find, ao fechar a transacao ele ja salva o cara q esta em memoria no banco!
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Produto produtoVerificacao = entityManager.find(Produto.class, 1);
+		Produto produtoVerificacao = em.find(Produto.class, 1);
 		
 		Assert.assertEquals(produto.getNome(), produtoVerificacao.getNome());
 		Assert.assertNotNull(produtoVerificacao.getPreco());
@@ -117,13 +120,13 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 		produto.setDescricao("Conheça o novo kindle.");
 		produto.setPreco(new BigDecimal(599));
 		
-		entityManager.getTransaction().begin();
-		entityManager.merge(produto);
-		entityManager.getTransaction().commit();
+		em.getTransaction().begin();
+		em.merge(produto);
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Produto produtoVerificacao = entityManager.find(Produto.class, 1);
+		Produto produtoVerificacao = em.find(Produto.class, 1);
 		
 		Assert.assertEquals("Kindle Paperwhite", produtoVerificacao.getNome());
 		
@@ -131,13 +134,13 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 	
 	@Test
 	public void removerObjeto() {
-		Produto produto = entityManager.find(Produto.class, 3);
+		Produto produto = em.find(Produto.class, 3);
 		
-		entityManager.getTransaction().begin();
-		entityManager.remove(produto);
-		entityManager.getTransaction().commit();
+		em.getTransaction().begin();
+		em.remove(produto);
+		em.getTransaction().commit();
 		
-		Produto produtoVerificacao = entityManager.find(Produto.class, 3);
+		Produto produtoVerificacao = em.find(Produto.class, 3);
 		
 		Assert.assertNull(produtoVerificacao);
 	}
@@ -149,16 +152,17 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 		produto.setNome("Câmera Canon");
 		produto.setDescricao("A melhor definição para as suas fotos");
 		produto.setPreco(new BigDecimal(5000));
+		produto.setDataCriacao(LocalDateTime.now());
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
-		entityManager.persist(produto);
+		em.persist(produto);
 		
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Produto produtoVerificaca = entityManager.find(Produto.class, produto.getId());
+		Produto produtoVerificaca = em.find(Produto.class, produto.getId());
 		
 		Assert.assertEquals(produto.getNome(), produtoVerificaca.getNome());
 	}
@@ -166,13 +170,13 @@ public class OperacoesComTransacaoTest extends EntityManagerTest {
 	
 	public void abrirEFecharATransacao() {
 		
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 		
 		
 //		entityManager.persist(produto);
 //		entityManager.merge(produto);
 //		entityManager.remove(produto);
 		
-		entityManager.getTransaction().commit();
+		em.getTransaction().commit();
 	}
 }

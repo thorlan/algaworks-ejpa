@@ -19,7 +19,7 @@ public class RelacionamentoOneToManyTest extends EntityManagerTest{
 
 	@Test
 	public void verificaRelacionamento() {
-		Cliente cliente = entityManager.find(Cliente.class, 1);
+		Cliente cliente = em.find(Cliente.class, 1);
 		
 		Pedido pedido = new Pedido();
 		pedido.setCliente(cliente);
@@ -27,30 +27,30 @@ public class RelacionamentoOneToManyTest extends EntityManagerTest{
 		pedido.setDataCriacao(LocalDateTime.now());
 		pedido.setTotal(BigDecimal.TEN);
 		
-		entityManager.getTransaction().begin();
-		entityManager.persist(pedido);
-		entityManager.getTransaction().commit();
+		em.getTransaction().begin();
+		em.persist(pedido);
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Cliente clienteVerificacao = entityManager.find(Cliente.class, cliente.getId());
+		Cliente clienteVerificacao = em.find(Cliente.class, cliente.getId());
 		
 		Assert.assertFalse(clienteVerificacao.getPedidos().isEmpty());
 	}
 	
 	@Test
 	public void devoReceberProdutoDeItemPedido() {
-		entityManager.getTransaction().begin();
+		em.getTransaction().begin();
 
-		Cliente cliente = entityManager.find(Cliente.class, 1);
-		Produto produto = entityManager.find(Produto.class, 1);
+		Cliente cliente = em.find(Cliente.class, 1);
+		Produto produto = em.find(Produto.class, 1);
 		
 		Pedido pedido = new Pedido();
 		pedido.setCliente(cliente);
 		pedido.setStatus(StatusPedido.AGUARDANDO);
 		pedido.setDataCriacao(LocalDateTime.now());
 		pedido.setTotal(BigDecimal.TEN);
-		entityManager.persist(pedido);
+		em.persist(pedido);
 		
 		ItemPedido itemPedido = new ItemPedido();
 		itemPedido.setPrecoProduto(produto.getPreco());
@@ -59,12 +59,12 @@ public class RelacionamentoOneToManyTest extends EntityManagerTest{
 		itemPedido.setProduto(produto);
 		itemPedido.setId(new ItemPedidoId(pedido.getId(), produto.getId()));
 		
-		entityManager.persist(itemPedido);
-		entityManager.getTransaction().commit();
+		em.persist(itemPedido);
+		em.getTransaction().commit();
 		
-		entityManager.clear();
+		em.clear();
 		
-		Pedido pedidoVerificacao = entityManager.find(Pedido.class, pedido.getId());
+		Pedido pedidoVerificacao = em.find(Pedido.class, pedido.getId());
 		
 		Assert.assertNotNull(pedidoVerificacao);
 		Assert.assertFalse(pedidoVerificacao.getItens().isEmpty());
