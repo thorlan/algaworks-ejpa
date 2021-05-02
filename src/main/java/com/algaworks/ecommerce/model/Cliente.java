@@ -10,6 +10,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@SecondaryTable(name = "cliente_detalhe", pkJoinColumns = @PrimaryKeyJoinColumn(name = "cliente_id"))
+@SecondaryTable(name = "cliente_detalhe", pkJoinColumns = @PrimaryKeyJoinColumn(name = "cliente_id"), foreignKey = @ForeignKey(name = "fk_cliente_detalhe_cliente"))
 @Table(name = "cliente", uniqueConstraints = { 
 		@UniqueConstraint(name = "unq_cpf", columnNames = { "cpf" })},
 		indexes = { @Index(name = "idx_nome", columnList = "nome")})
@@ -41,7 +42,7 @@ public class Cliente extends EntitadeBaseInteger {
 	
 	@ElementCollection
 	@CollectionTable(name = "cliente_contato", 
-					joinColumns = @JoinColumn(name = "cliente_id"))
+					joinColumns = @JoinColumn(name = "cliente_id", nullable = false, foreignKey = @ForeignKey(name ="fk_cliente_contato_cliente")))
 	@MapKeyColumn(name = "tipo")
 	@Column(name = "descricao")
 	private Map<String, String> contatos;
