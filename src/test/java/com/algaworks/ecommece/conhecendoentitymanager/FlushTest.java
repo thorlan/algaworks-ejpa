@@ -1,11 +1,8 @@
 package com.algaworks.ecommece.conhecendoentitymanager;
 
-import javax.management.RuntimeErrorException;
-
 import org.junit.Test;
 
 import com.algaworks.ecommerce.model.Pedido;
-import com.algaworks.ecommerce.model.Produto;
 import com.algaworks.ecommerce.model.StatusPedido;
 
 import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
