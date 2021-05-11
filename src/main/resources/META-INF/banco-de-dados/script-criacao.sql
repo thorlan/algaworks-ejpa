@@ -33,3 +33,8 @@ alter table produto_atributo add constraint fk_produto_atributo_produto foreign 
 alter table produto_categoria add constraint fk_produto_categoria_categoria foreign key (categoria_id) references categoria (id);
 alter table produto_categoria add constraint fk_produto_categoria_produto foreign key (produto_id) references produto (id);
 alter table produto_tag add constraint fk_produto_tag_produto foreign key (produto_id) references produto (id);
+
+
+create table testando (id integer not null auto_increment, primary key (id)) engine=InnoDB;
+
+create function acima_media_faturamento(valor double) returns boolean reads sql data return valor > (select avg(total) from pedido);
