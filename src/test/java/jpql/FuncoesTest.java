@@ -86,7 +86,7 @@ public class FuncoesTest extends EntityManagerTest {
 
 	}
 
-	@Test
+	//@Test
 	public void aplicarFuncaoNativas() {
 
 		String jpql = "select p from Pedido p where function('acima_media_faturamento', p.total) = 1";
@@ -94,6 +94,23 @@ public class FuncoesTest extends EntityManagerTest {
 		TypedQuery<Pedido> typedQuery = em.createQuery(jpql, Pedido.class);
 
 		List<Pedido> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(obj -> System.out.println(obj));
+
+	}
+	
+	@Test
+	public void aplicarFuncaoAgregacao() {
+
+		//avg, count, min, max, sum
+		String jpql = "select avg(p.total) from Pedido p";
+		
+		jpql = "select count(p.total) from Pedido p";
+
+		TypedQuery<Number> typedQuery = em.createQuery(jpql, Number.class);
+
+		List<Number> lista = typedQuery.getResultList();
 		Assert.assertFalse(lista.isEmpty());
 
 		lista.forEach(obj -> System.out.println(obj));

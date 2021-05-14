@@ -30,12 +30,14 @@ import com.algaworks.ecommerce.listener.GerarNotaFiscalListener;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @EntityListeners({GerarNotaFiscalListener.class, GenericoListener.class})
 @Entity
 @Getter
 @Setter
 @Table(name = "pedido")
+@ToString
 public class Pedido extends EntitadeBaseInteger {
 
     @ManyToOne(optional = false)

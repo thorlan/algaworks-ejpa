@@ -16,7 +16,25 @@ import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
 
 public class BasicoJPQLTest extends EntityManagerTest {
 	
+	
 	@Test
+	public void usarDistinct() {
+		//evita duplicacao nas consultas!
+	
+		String jpql = "Select distinct p from Pedido p "
+				+ "join p.itens i join i.produto pro "
+				+ "where pro.id in (1,2,3,4) ";
+	
+		TypedQuery<Pedido> typedQuery = em.createQuery(jpql, Pedido.class);
+		List<Pedido> pedidos = typedQuery.getResultList();
+		
+		Assert.assertFalse(pedidos.isEmpty());
+		
+		System.out.println(pedidos.size());
+	}
+	
+	
+	//@Test
 	public void projetarOResultadoDTO() {
 		String jpql = "select new com.algaworks.ecommerce.dto.ProdutoDTO(id, nome) from Produto";
 		
@@ -29,7 +47,7 @@ public class BasicoJPQLTest extends EntityManagerTest {
 		lista.forEach(l -> System.out.println(l));
 	}
 	
-	@Test
+	//@Test
 	public void projetarOResultado() {
 		String jpql = "select id, nome from Produto";
 		
@@ -41,7 +59,7 @@ public class BasicoJPQLTest extends EntityManagerTest {
 		lista.forEach(array-> System.out.println(array[0] + " , " + array[1]));
 	}
 	
-	@Test
+	//@Test
 	public void selecionarUmAtributoParaRetorno() {
 		String jpql = "select p.nome from Produto p";
 		
@@ -58,7 +76,7 @@ public class BasicoJPQLTest extends EntityManagerTest {
 	}
 	
 	
-	@Test
+	//@Test
 	public void buscarPorIdentificador() {
 		
 		TypedQuery<Pedido> typedQuery = em.createQuery("select p from Pedido p where p.id = 1", Pedido.class);
@@ -67,7 +85,7 @@ public class BasicoJPQLTest extends EntityManagerTest {
 		Assert.assertNotNull(pedido);
 	}
 	
-	@Test
+	//@Test
 	public void mostrarDiferencaQueries() {
 		String jpql = "select p from Pedido p where p.id = 1";
 		
