@@ -16,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -30,6 +32,10 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@NamedQueries({
+	@NamedQuery(name ="Produto.listar", query = "select p from Produto p")
+	
+})
 @Table(name = "produto", 
 		uniqueConstraints = { @UniqueConstraint(name = "unq_nome", columnNames = { "nome" })},
 		indexes = { @Index(name = "idx_nome", columnList = "nome")})
