@@ -18,7 +18,6 @@ public class BasicoJPQLTest extends EntityManagerTest {
 	
 	
 	@Test
-<<<<<<< HEAD
 	public void usarDistinct() {
 		//evita duplicacao nas consultas!
 	
@@ -36,7 +35,6 @@ public class BasicoJPQLTest extends EntityManagerTest {
 	
 	
 	//@Test
-=======
 	public void ordenarResultados() {
 		//asc desc
 		String jpql = "select c from Cliente c order by c.nome asc";
@@ -49,7 +47,6 @@ public class BasicoJPQLTest extends EntityManagerTest {
 	}
 	
 	@Test
->>>>>>> 4e2cb9b50df05dd6467976f0fe27e36ba0830a3f
 	public void projetarOResultadoDTO() {
 		String jpql = "select new com.algaworks.ecommerce.dto.ProdutoDTO(id, nome) from Produto";
 		
