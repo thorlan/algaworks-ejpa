@@ -62,10 +62,13 @@ public class Cliente extends EntitadeBaseInteger {
 	
 	@PostLoad
 	public void configurarPrimeiroNome() {
-		if (nome != null && !nome.isBlank()) {
-			int index = nome.indexOf(" ");
-			if (index > -1) {
-				primeiroNome = nome.substring(0, index);
+		//dando erro no generate meta model, versao do java?
+		if (nome != null) {
+			if(nome.trim().length() > 0) {
+				int index = nome.indexOf(" ");
+				if (index > -1) {
+					primeiroNome = nome.substring(0, index);
+				}
 			}
 		}
 	}
