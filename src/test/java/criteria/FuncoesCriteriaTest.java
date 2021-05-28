@@ -23,30 +23,20 @@ import com.algaworks.ecommerce.model.StatusPedido;
 import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
 
 public class FuncoesCriteriaTest extends EntityManagerTest {
+
 	
 	@Test
-    public void aplicarFuncaoData() {
-        // current_date, current_time, current_timestamp
-
+    public void aplicarFuncaoAgregacao() {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
         Root<Pedido> root = criteriaQuery.from(Pedido.class);
-        Join<Pedido, Pagamento> joinPagamento = root.join(Pedido_.pagamento);
-        Join<Pedido, PagamentoBoleto> joinPagamentoBoleto = criteriaBuilder
-                .treat(joinPagamento, PagamentoBoleto.class);
 
         criteriaQuery.multiselect(
-                root.get(Pedido_.id),
-                criteriaBuilder.currentDate(),
-                criteriaBuilder.currentTime(),
-                criteriaBuilder.currentTimestamp()
-        );
-
-        criteriaQuery.where(
-                criteriaBuilder.between(criteriaBuilder.currentDate(),
-                        root.get(Pedido_.dataCriacao).as(java.sql.Date.class),
-                        joinPagamentoBoleto.get(PagamentoBoleto_.dataVencimento).as(java.sql.Date.class)),
-                criteriaBuilder.equal(root.get(Pedido_.status), StatusPedido.AGUARDANDO)
+                criteriaBuilder.count(root.get(Pedido_.id)),
+                criteriaBuilder.avg(root.get(Pedido_.total)),
+                criteriaBuilder.sum(root.get(Pedido_.total)),
+                criteriaBuilder.min(root.get(Pedido_.total)),
+                criteriaBuilder.max(root.get(Pedido_.total))
         );
 
         TypedQuery<Object[]> typedQuery = em.createQuery(criteriaQuery);
@@ -55,51 +45,124 @@ public class FuncoesCriteriaTest extends EntityManagerTest {
         Assert.assertFalse(lista.isEmpty());
 
         lista.forEach(arr -> System.out.println(
-                arr[0]
-                        + ", current_date: " + arr[1]
-                        + ", current_time: " + arr[2]
-                        + ", current_timestamp: " + arr[3]));
+                "count: " + arr[0]
+                        + ", avg: " + arr[1]
+                        + ", sum: " + arr[2]
+                        + ", min: " + arr[3]
+                        + ", max: " + arr[4]));
     }
 	
-	
 	//@Test
+	public void aplicarFuncaoNativas() {
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+		Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+		criteriaQuery.multiselect(root.get(Pedido_.id),
+				criteriaBuilder.function("dayname", String.class, root.get(Pedido_.dataCriacao)));
+
+		criteriaQuery.where(criteriaBuilder
+				.isTrue(criteriaBuilder.function("acima_media_faturamento", Boolean.class, root.get(Pedido_.total))));
+
+		TypedQuery<Object[]> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Object[]> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(arr -> System.out.println(arr[0] + ", dayname: " + arr[1]));
+	}
+
+	// @Test
+	public void aplicarFuncaoColecao() {
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+		Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+		criteriaQuery.multiselect(root.get(Pedido_.id), criteriaBuilder.size(root.get(Pedido_.itens)));
+
+		criteriaQuery.where(criteriaBuilder.greaterThan(criteriaBuilder.size(root.get(Pedido_.itens)), 1));
+
+		TypedQuery<Object[]> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Object[]> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(arr -> System.out.println(arr[0] + ", size: " + arr[1]));
+	}
+
+	// @Test
+	public void aplicarFuncaoNumero() {
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+		Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+		criteriaQuery.multiselect(root.get(Pedido_.id),
+				criteriaBuilder.abs(criteriaBuilder.prod(root.get(Pedido_.id), -1)),
+				criteriaBuilder.mod(root.get(Pedido_.id), 2), criteriaBuilder.sqrt(root.get(Pedido_.total)));
+
+		criteriaQuery.where(criteriaBuilder.greaterThan(criteriaBuilder.sqrt(root.get(Pedido_.total)), 10.0));
+
+		TypedQuery<Object[]> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Object[]> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(
+				arr -> System.out.println(arr[0] + ", abs: " + arr[1] + ", mod: " + arr[2] + ", sqrt: " + arr[3]));
+	}
+
+	// @Test
+	public void aplicarFuncaoData() {
+		// current_date, current_time, current_timestamp
+
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+		Root<Pedido> root = criteriaQuery.from(Pedido.class);
+		Join<Pedido, Pagamento> joinPagamento = root.join(Pedido_.pagamento);
+		Join<Pedido, PagamentoBoleto> joinPagamentoBoleto = criteriaBuilder.treat(joinPagamento, PagamentoBoleto.class);
+
+		criteriaQuery.multiselect(root.get(Pedido_.id), criteriaBuilder.currentDate(), criteriaBuilder.currentTime(),
+				criteriaBuilder.currentTimestamp());
+
+		criteriaQuery.where(
+				criteriaBuilder.between(criteriaBuilder.currentDate(),
+						root.get(Pedido_.dataCriacao).as(java.sql.Date.class),
+						joinPagamentoBoleto.get(PagamentoBoleto_.dataVencimento).as(java.sql.Date.class)),
+				criteriaBuilder.equal(root.get(Pedido_.status), StatusPedido.AGUARDANDO));
+
+		TypedQuery<Object[]> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Object[]> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(arr -> System.out.println(
+				arr[0] + ", current_date: " + arr[1] + ", current_time: " + arr[2] + ", current_timestamp: " + arr[3]));
+	}
+
+	// @Test
 	public void aplicarFuncaoString() {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Object[]> criteriaQuery = cb.createQuery(Object[].class);
 		Root<Cliente> root = criteriaQuery.from(Cliente.class);
-		
-		criteriaQuery.multiselect(
-				root.get(Cliente_.nome),
-				cb.concat("Nome do Cliente: ", root.get(Cliente_.nome)),
-				cb.length(root.get(Cliente_.nome)),
-				cb.locate(root.get(Cliente_.nome), "a"),
-				cb.substring(root.get(Cliente_.nome), 1,2),
-				cb.lower(root.get(Cliente_.nome)),
-				cb.upper(root.get(Cliente_.nome)),
-				cb.trim(root.get(Cliente_.nome))
-		);
-		
-		//posso usar no where tbm as funcoes!
-		criteriaQuery.where(cb.equal(
-                cb.substring(root.get(Cliente_.nome), 1, 1), "M"));
-		
+
+		criteriaQuery.multiselect(root.get(Cliente_.nome), cb.concat("Nome do Cliente: ", root.get(Cliente_.nome)),
+				cb.length(root.get(Cliente_.nome)), cb.locate(root.get(Cliente_.nome), "a"),
+				cb.substring(root.get(Cliente_.nome), 1, 2), cb.lower(root.get(Cliente_.nome)),
+				cb.upper(root.get(Cliente_.nome)), cb.trim(root.get(Cliente_.nome)));
+
+		// posso usar no where tbm as funcoes!
+		criteriaQuery.where(cb.equal(cb.substring(root.get(Cliente_.nome), 1, 1), "M"));
+
 		TypedQuery<Object[]> typedQuery = em.createQuery(criteriaQuery);
-		
+
 		List<Object[]> lista = typedQuery.getResultList();
 		Assert.assertFalse(lista.isEmpty());
-		
-		 lista.forEach(arr -> System.out.println(
-	                arr[0]
-	                        + ", concat: " + arr[1]
-	                        + ", length: " + arr[2]
-	                        + ", locate: " + arr[3]
-	                        + ", substring: " + arr[4]
-	                        + ", lower: " + arr[5]
-	                        + ", upper: " + arr[6]
-	                        + ", trim: |" + arr[7] + "|"));
-	
+
+		lista.forEach(arr -> System.out.println(
+				arr[0] + ", concat: " + arr[1] + ", length: " + arr[2] + ", locate: " + arr[3] + ", substring: "
+						+ arr[4] + ", lower: " + arr[5] + ", upper: " + arr[6] + ", trim: |" + arr[7] + "|"));
+
 	}
-	
 
 }

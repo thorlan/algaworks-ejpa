@@ -38,3 +38,6 @@ alter table produto_tag add constraint fk_produto_tag_produto foreign key (produ
 create table testando (id integer not null auto_increment, primary key (id)) engine=InnoDB;
 
 create function acima_media_faturamento(valor double) returns boolean reads sql data return valor > (select avg(total) from pedido);
+
+create table testando (id integer not null auto_increment, primary key (id)) engine=InnoDB;
+
