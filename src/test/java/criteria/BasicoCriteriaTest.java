@@ -15,6 +15,7 @@ import com.algaworks.ecommerce.dto.ProdutoDTO;
 import com.algaworks.ecommerce.model.Cliente;
 import com.algaworks.ecommerce.model.Cliente_;
 import com.algaworks.ecommerce.model.Pedido;
+import com.algaworks.ecommerce.model.Pedido_;
 import com.algaworks.ecommerce.model.Produto;
 
 import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
@@ -22,29 +23,43 @@ import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
 public class BasicoCriteriaTest extends EntityManagerTest {
 
 	@Test
+	public void usarDistinct() {
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Pedido> criteriaQuery = criteriaBuilder.createQuery(Pedido.class);
+		Root<Pedido> root = criteriaQuery.from(Pedido.class);
+		root.join(Pedido_.itens);
+
+		criteriaQuery.select(root);
+		criteriaQuery.distinct(true);
+
+		TypedQuery<Pedido> typedQuery = em.createQuery(criteriaQuery);
+		List<Pedido> lista = typedQuery.getResultList();
+
+		lista.forEach(p -> System.out.println("ID: " + p.getId()));
+	}
+
+	// @Test
 	public void ordenarResultados() {
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Cliente> criteriaQuery = criteriaBuilder.createQuery(Cliente.class);
 		Root<Cliente> root = criteriaQuery.from(Cliente.class);
 
 		criteriaQuery.select(root);
-		criteriaQuery.orderBy(criteriaBuilder.asc(root.get(Cliente_.nome))); //desc
+		criteriaQuery.orderBy(criteriaBuilder.asc(root.get(Cliente_.nome))); // desc
 
 		TypedQuery<Cliente> typedQuery = em.createQuery(criteriaQuery);
 		List<Cliente> lista = typedQuery.getResultList();
 		Assert.assertNotNull(lista);
 		lista.forEach(c -> System.out.println(c.getId() + " " + c.getNome()));
 	}
-	
-	
-	
-	//@Test
+
+	// @Test
 	public void projetarOResultadoDTO() {
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<ProdutoDTO> criteriaQuery = criteriaBuilder.createQuery(ProdutoDTO.class);
 		Root<Produto> root = criteriaQuery.from(Produto.class);
 
-		//usa o construtor do ProdutoDTO
+		// usa o construtor do ProdutoDTO
 		criteriaQuery.select(criteriaBuilder.construct(ProdutoDTO.class, root.get("id"), root.get("nome")));
 
 		TypedQuery<ProdutoDTO> typedQuery = em.createQuery(criteriaQuery);
