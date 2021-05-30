@@ -18,13 +18,158 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class SubqueriesCriteriaTest extends EntityManagerTest {
-	
-	//retornar todos os produtos que ja foram vendidos por preco diferente do atual
-	//produtos com preco diferente do itemPedido
-	
+
+	//gopro e camera 80D q tem q retornar!
 	@Test
-	public void pesquisarComExistsExercicioo() {
+	public void pesquisarComAllExercicio() {
+		//todos os produtos que sempre foram vendidos pelo mesmo preco
+		//select distintc p from ItemPedido ip join ip.produto p
+		//where ip.precoProduto = ALL
+		//(select precoProduto from ItemPedido where produto = p and id <> ip.id)
 		
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+		Root<ItemPedido> root = criteriaQuery.from(ItemPedido.class);
+		Join<ItemPedido, Produto> joinItemPedidoProduto = root.join(ItemPedido_.produto);
+
+		criteriaQuery.select(root.get(ItemPedido_.produto)).distinct(true);
+
+		Subquery<BigDecimal> subquery = criteriaQuery.subquery(BigDecimal.class);
+		Root<ItemPedido> subqueryRoot = subquery.from(ItemPedido.class);
+		subquery.select(subqueryRoot.get(ItemPedido_.precoProduto));
+		
+		subquery.where(criteriaBuilder.equal(subqueryRoot.get(ItemPedido_.produto), joinItemPedidoProduto)
+				, criteriaBuilder.notEqual(root.get(ItemPedido_.id), subqueryRoot.get(ItemPedido_.id))
+				);
+
+		criteriaQuery.where(criteriaBuilder.equal(root.get(ItemPedido_.precoProduto), criteriaBuilder.all(subquery)));
+
+		TypedQuery<Produto> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Produto> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(obj -> System.out.println("ID: " + obj.getId() + " " + obj.getNome()));
+		
+	}
+	
+	//@Test
+	public void pesquisarComAny02() {
+//	        Todos os produtos que já foram vendidos por um preco diferente do atual
+//	        String jpql = "select p from Produto p " +
+//	                " where p.preco <> ANY (select precoProduto from ItemPedido where produto = p)";
+
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+		Root<Produto> root = criteriaQuery.from(Produto.class);
+
+		criteriaQuery.select(root);
+
+		Subquery<BigDecimal> subquery = criteriaQuery.subquery(BigDecimal.class);
+		Root<ItemPedido> subqueryRoot = subquery.from(ItemPedido.class);
+		subquery.select(subqueryRoot.get(ItemPedido_.precoProduto));
+		subquery.where(criteriaBuilder.equal(subqueryRoot.get(ItemPedido_.produto), root));
+
+		criteriaQuery.where(criteriaBuilder.notEqual(root.get(Produto_.preco), criteriaBuilder.any(subquery)));
+
+		TypedQuery<Produto> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Produto> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(obj -> System.out.println("ID: " + obj.getId()));
+
+	}
+
+	//@Test
+	public void pesquisarComAny01() {
+//	        Todos os produtos que já foram vendidos, pelo menos, uma vez pelo preço atual.
+//	        String jpql = "select p from Produto p " +
+//	                " where p.preco = ANY (select precoProduto from ItemPedido where produto = p)";
+
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+		Root<Produto> root = criteriaQuery.from(Produto.class);
+
+		criteriaQuery.select(root);
+
+		Subquery<BigDecimal> subquery = criteriaQuery.subquery(BigDecimal.class);
+		Root<ItemPedido> subqueryRoot = subquery.from(ItemPedido.class);
+		subquery.select(subqueryRoot.get(ItemPedido_.precoProduto));
+		subquery.where(criteriaBuilder.equal(subqueryRoot.get(ItemPedido_.produto), root));
+
+		criteriaQuery.where(criteriaBuilder.equal(root.get(Produto_.preco), criteriaBuilder.any(subquery)));
+
+		TypedQuery<Produto> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Produto> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(obj -> System.out.println("ID: " + obj.getId()));
+
+	}
+
+//	@Test
+	public void pesquisarComAll02() {
+//        Todos os produtos não foram vendidos mais depois que encareceram
+//        String jpql = "select p from Produto p where " +
+//                " p.preco > ALL (select precoProduto from ItemPedido where produto = p)";
+//                " and exists (select 1 from ItemPedido where produto = p)";
+
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+		Root<Produto> root = criteriaQuery.from(Produto.class);
+
+		criteriaQuery.select(root);
+
+		Subquery<BigDecimal> subquery = criteriaQuery.subquery(BigDecimal.class);
+		Root<ItemPedido> subqueryRoot = subquery.from(ItemPedido.class);
+		subquery.select(subqueryRoot.get(ItemPedido_.precoProduto));
+		subquery.where(criteriaBuilder.equal(subqueryRoot.get(ItemPedido_.produto), root));
+
+		criteriaQuery.where(criteriaBuilder.greaterThan(root.get(Produto_.preco), criteriaBuilder.all(subquery)),
+				criteriaBuilder.exists(subquery));
+
+		TypedQuery<Produto> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Produto> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(obj -> System.out.println("ID: " + obj.getId()));
+	}
+
+//	@Test
+	public void pesquisarComAll01() {
+//        Todos os produtos que SEMPRE foram vendidos pelo preco atual.
+//        String jpql = "select p from Produto p where " +
+//                " p.preco = ALL (select precoProduto from ItemPedido where produto = p)";
+
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+		Root<Produto> root = criteriaQuery.from(Produto.class);
+
+		criteriaQuery.select(root);
+
+		Subquery<BigDecimal> subquery = criteriaQuery.subquery(BigDecimal.class);
+		Root<ItemPedido> subqueryRoot = subquery.from(ItemPedido.class);
+		subquery.select(subqueryRoot.get(ItemPedido_.precoProduto));
+		subquery.where(criteriaBuilder.equal(subqueryRoot.get(ItemPedido_.produto), root));
+
+		criteriaQuery.where(criteriaBuilder.equal(root.get(Produto_.preco), criteriaBuilder.all(subquery)));
+
+		TypedQuery<Produto> typedQuery = em.createQuery(criteriaQuery);
+
+		List<Produto> lista = typedQuery.getResultList();
+		Assert.assertFalse(lista.isEmpty());
+
+		lista.forEach(obj -> System.out.println("ID: " + obj.getId()));
+	}
+
+	// retornar todos os produtos que ja foram vendidos por preco diferente do atual
+	// produtos com preco diferente do itemPedido
+	// @Test
+	public void pesquisarComExistsExercicioo() {
+
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
 		Root<Produto> root = criteriaQuery.from(Produto.class);
@@ -35,9 +180,10 @@ public class SubqueriesCriteriaTest extends EntityManagerTest {
 		Root<ItemPedido> subqueryRoot = subquery.from(ItemPedido.class);
 		subquery.select(criteriaBuilder.literal(1));
 
-		Predicate precoProdutoNotEqualItemPedidoPreco = criteriaBuilder.notEqual(root.get(Produto_.preco), subqueryRoot.get(ItemPedido_.precoProduto));
+		Predicate precoProdutoNotEqualItemPedidoPreco = criteriaBuilder.notEqual(root.get(Produto_.preco),
+				subqueryRoot.get(ItemPedido_.precoProduto));
 		Predicate equal = criteriaBuilder.equal(subqueryRoot.get(ItemPedido_.produto), root);
-		
+
 		subquery.where(criteriaBuilder.and(equal, precoProdutoNotEqualItemPedidoPreco));
 
 		criteriaQuery.where(criteriaBuilder.exists(subquery));
@@ -50,7 +196,7 @@ public class SubqueriesCriteriaTest extends EntityManagerTest {
 		lista.forEach(obj -> System.out.println("ID: " + obj.getId()));
 	}
 
-	//@Test
+	// @Test
 	public void pesquisarComInExercicio() {
 		// retornar todos os pedidos que contenham um produto da categoria de id = 2
 		// select p from Pedido join Produto pro join Categoria c where c.id in (select
@@ -67,7 +213,7 @@ public class SubqueriesCriteriaTest extends EntityManagerTest {
 
 		Join<ItemPedido, Produto> subqueryJoinProduto = subqueryRoot.join(ItemPedido_.produto);
 		Join<Produto, Categoria> subqueryJoinProdutoCategoria = subqueryJoinProduto.join(Produto_.categorias);
-		
+
 		subquery.select(subqueryRoot.get(ItemPedido_.id).get(ItemPedidoId_.pedidoId));
 		subquery.where(criteriaBuilder.equal(subqueryJoinProdutoCategoria.get(Categoria_.id), 2));
 
