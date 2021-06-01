@@ -20,6 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -39,37 +41,33 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@NamedNativeQueries({
+    @NamedNativeQuery(name = "produto_loja.listar",
+            query = "select id, nome, descricao, data_criacao, data_ultima_atualizacao, preco, foto " +
+                    " from produto_loja", resultClass = Produto.class),
+    @NamedNativeQuery(name = "ecm_produto.listar",
+            query = "select * from ecm_produto", resultSetMapping = "ecm_produto.Produto")
+})
 @SqlResultSetMappings({
-    @SqlResultSetMapping(name = "produto_loja.Produto",
-            entities = { @EntityResult(entityClass = Produto.class) }),
-    @SqlResultSetMapping(name = "ecm_produto.Produto",
-            entities = { @EntityResult(entityClass = Produto.class,
-                    fields = {
-                            @FieldResult(name = "id", column = "prd_id"),
-                            @FieldResult(name = "nome", column = "prd_nome"),
-                            @FieldResult(name = "descricao", column = "prd_descricao"),
-                            @FieldResult(name = "preco", column = "prd_preco"),
-                            @FieldResult(name = "foto", column = "prd_foto"),
-                            @FieldResult(name = "dataCriacao", column = "prd_data_criacao"),
-                            @FieldResult(name = "dataUltimaAtualizacao",
-                                    column = "prd_data_ultima_atualizacao")
-                    }) }),
-    @SqlResultSetMapping(name = "ecm_produto.ProdutoDTO",
-            classes = {
-                    @ConstructorResult(targetClass = ProdutoDTO.class,
-                            columns = {
-                                    @ColumnResult(name = "prd_id", type = Integer.class),
-                                    @ColumnResult(name = "prd_nome", type = String.class)
-                            })
-            })
+		@SqlResultSetMapping(name = "produto_loja.Produto", entities = { @EntityResult(entityClass = Produto.class) }),
+		@SqlResultSetMapping(name = "ecm_produto.Produto", entities = {
+				@EntityResult(entityClass = Produto.class, fields = { @FieldResult(name = "id", column = "prd_id"),
+						@FieldResult(name = "nome", column = "prd_nome"),
+						@FieldResult(name = "descricao", column = "prd_descricao"),
+						@FieldResult(name = "preco", column = "prd_preco"),
+						@FieldResult(name = "foto", column = "prd_foto"),
+						@FieldResult(name = "dataCriacao", column = "prd_data_criacao"),
+						@FieldResult(name = "dataUltimaAtualizacao", column = "prd_data_ultima_atualizacao") }) }),
+		@SqlResultSetMapping(name = "ecm_produto.ProdutoDTO", classes = {
+				@ConstructorResult(targetClass = ProdutoDTO.class, columns = {
+						@ColumnResult(name = "prd_id", type = Integer.class),
+						@ColumnResult(name = "prd_nome", type = String.class) }) }) })
+@NamedQueries({ @NamedQuery(name = "Produto.listar", query = "select p from Produto p")
+
 })
-@NamedQueries({
-	@NamedQuery(name ="Produto.listar", query = "select p from Produto p")
-	
-})
-@Table(name = "produto", 
-		uniqueConstraints = { @UniqueConstraint(name = "unq_nome", columnNames = { "nome" })},
-		indexes = { @Index(name = "idx_nome", columnList = "nome")})
+@Table(name = "produto", uniqueConstraints = {
+		@UniqueConstraint(name = "unq_nome", columnNames = { "nome" }) }, indexes = {
+				@Index(name = "idx_nome", columnList = "nome") })
 public class Produto extends EntitadeBaseInteger {
 
 	@Column(name = "data_criacao", updatable = false, nullable = false, columnDefinition = "datetime(6)")
@@ -90,26 +88,21 @@ public class Produto extends EntitadeBaseInteger {
 	private List<ItemPedido> itemPedido;
 
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "produto_categoria",
-			joinColumns = @JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(name ="fk_produto_categoria_produto")),
-			inverseJoinColumns = @JoinColumn(name = "categoria_id", nullable = false, foreignKey = @ForeignKey(name ="fk_produto_categoria_categoria")))
+	@JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(name = "fk_produto_categoria_produto")), inverseJoinColumns = @JoinColumn(name = "categoria_id", nullable = false, foreignKey = @ForeignKey(name = "fk_produto_categoria_categoria")))
 	private List<Categoria> categorias;
 
-	@OneToOne
-	@JoinColumn(name = "produto")
+	@OneToOne(mappedBy = "produto")
 	private Estoque estoque;
-	
+
 	@ElementCollection
-	@CollectionTable(name = "produto_tag", 
-					joinColumns = @JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(name ="fk_produto_tag_produto")))
+	@CollectionTable(name = "produto_tag", joinColumns = @JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(name = "fk_produto_tag_produto")))
 	@Column(name = "tag", length = 50, nullable = false)
 	private List<String> tags;
-	
+
 	@ElementCollection
-	@CollectionTable(name = "produto_atributo", 
-					joinColumns = @JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(name ="fk_produto_atributo_produto")))
+	@CollectionTable(name = "produto_atributo", joinColumns = @JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(name = "fk_produto_atributo_produto")))
 	private List<Atributo> atributos;
-	
+
 	@Lob
 	private byte[] foto;
 

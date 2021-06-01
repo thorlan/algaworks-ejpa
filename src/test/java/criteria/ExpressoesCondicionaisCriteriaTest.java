@@ -197,7 +197,7 @@ public class ExpressoesCondicionaisCriteriaTest extends EntityManagerTest {
 
 		criteriaQuery.select(root);
 
-		criteriaQuery.where(criteriaBuilder.isEmpty(root.get(Produto_.itemPedido)));
+		//criteriaQuery.where(criteriaBuilder.isEmpty(root.get(Produto_.itemPedido)));
 
 		TypedQuery<Produto> typedQuery = em.createQuery(criteriaQuery);
 		List<Produto> lista = typedQuery.getResultList();

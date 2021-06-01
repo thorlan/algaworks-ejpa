@@ -6,7 +6,9 @@ import javax.persistence.Query;
 
 import org.junit.Test;
 
+import com.algaworks.ecommerce.dto.CategoriaDTO;
 import com.algaworks.ecommerce.dto.ProdutoDTO;
+import com.algaworks.ecommerce.model.Categoria;
 import com.algaworks.ecommerce.model.ItemPedido;
 import com.algaworks.ecommerce.model.Produto;
 
@@ -14,7 +16,51 @@ import cm.algaworks.ecommerce.iniciandocomjpa.EntityManagerTest;
 
 public class ConsultaNativaTest extends EntityManagerTest {
 
+	//mapearConsultaParaDTOEmArquivoExternoExercicio
+	//criar categoria dto
+	//criar a query no xml!
+	//ecm_categirua.listar.dto
 	@Test
+    public void mapearConsultaParaDTOEmArquivoExternoExercicio() {
+        Query query = em.createNamedQuery("ecm_categoria.listar.dto");
+
+        List<CategoriaDTO> lista = query.getResultList();
+
+        lista.stream().forEach(obj -> System.out.println(
+                String.format("CategoriaDTO => ID: %s, Nome: %s", obj.getId(), obj.getNome())));
+    }
+	
+	//@Test
+	public void usarAquivoXML() {
+		Query query = em.createNamedQuery("ecm_categoria.listar");
+
+		List<Categoria> lista = query.getResultList();
+
+		lista.stream().forEach(
+				obj -> System.out.println(String.format("Categoria => ID: %s, Nome: %s", obj.getId(), obj.getNome())));
+	}
+
+	//@Test
+	public void usarUmaNamedNativeQuery02() {
+		Query query = em.createNamedQuery("ecm_produto.listar");
+
+		List<Produto> lista = query.getResultList();
+
+		lista.stream().forEach(
+				obj -> System.out.println(String.format("Produto => ID: %s, Nome: %s", obj.getId(), obj.getNome())));
+	}
+
+	// @Test
+	public void usarUmaNamedNativeQuery01() {
+		Query query = em.createNamedQuery("produto_loja.listar");
+
+		List<Produto> lista = query.getResultList();
+
+		lista.stream().forEach(
+				obj -> System.out.println(String.format("Produto => ID: %s, Nome: %s", obj.getId(), obj.getNome())));
+	}
+
+	// @Test
 	public void usarColumnResultRetornarDTO() {
 		String sql = "select * from ecm_produto";
 
@@ -26,7 +72,7 @@ public class ConsultaNativaTest extends EntityManagerTest {
 				obj -> System.out.println(String.format("ProdutoDTO => ID: %s, Nome: %s", obj.getId(), obj.getNome())));
 	}
 
-	//@Test
+	// @Test
 	public void usarFieldResult() {
 		String sql = "select * from ecm_produto";
 
@@ -54,7 +100,7 @@ public class ConsultaNativaTest extends EntityManagerTest {
 
 	// @Test
 	public void usarSQLResultSetMapping01() {
-		String sql = "select id, nome, descricao, data_criacao, data_ultima_atualizacao, preco, foto, null produto"
+		String sql = "select id, nome, descricao, data_criacao, data_ultima_atualizacao, preco, foto"
 				+ " from produto_loja";
 
 		Query query = em.createNativeQuery(sql, "produto_loja.Produto");
@@ -65,11 +111,11 @@ public class ConsultaNativaTest extends EntityManagerTest {
 				obj -> System.out.println(String.format("Produto => ID: %s, Nome: %s", obj.getId(), obj.getNome())));
 	}
 
-//   @Test
+	// @Test
 	public void passarParametros() {
 		String sql = "select prd_id id, prd_nome nome, prd_descricao descricao, "
 				+ "            prd_data_criacao data_criacao, prd_data_ultima_atualizacao data_ultima_atualizacao, "
-				+ "            prd_preco preco, prd_foto foto, null produto" + " from ecm_produto where prd_id = :id";
+				+ "            prd_preco preco, prd_foto foto" + " from ecm_produto where prd_id = :id";
 
 		Query query = em.createNativeQuery(sql, Produto.class);
 		query.setParameter("id", 201);

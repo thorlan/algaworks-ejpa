@@ -7,6 +7,7 @@
       <!--   <mapping-file>META-INF/consultas/pedido.xml</mapping-file>
         <mapping-file>META-INF/consultas/produto.xml</mapping-file>
  -->
+ 		<mapping-file>META-INF/consultas/categoria.xml</mapping-file>
         <properties>
             <property name="javax.persistence.jdbc.url"
                       value="jdbc:mysql://localhost/algaworks_ecommerce?createDatabaseIfNotExist=true&amp;useTimezone=true&amp;serverTimezone=UTC" />
