@@ -33,7 +33,7 @@ public class MapeamentoObjetoEmbutido extends EntityManagerTest {
 		pedido.setTotal(new BigDecimal(1000));
 		pedido.setDataCriacao(LocalDateTime.now());
 		
-		pedido.setEnderecoEntregaPedido(endereco);
+		pedido.setEnderecoEntrega(endereco);
 		
 		pedido.setCliente(cliente);
 		
@@ -45,7 +45,7 @@ public class MapeamentoObjetoEmbutido extends EntityManagerTest {
 		
 		Pedido pedidoVerificacao = em.find(Pedido.class, pedido.getId());
 		
-		Assert.assertEquals(pedido.getEnderecoEntregaPedido().getBairro(), pedidoVerificacao.getEnderecoEntregaPedido().getBairro());
+		Assert.assertEquals(pedido.getEnderecoEntrega().getBairro(), pedidoVerificacao.getEnderecoEntrega().getBairro());
 	}
 	
 	

@@ -1,85 +1,141 @@
 package com.algaworks.ecommerce.model;
 
+import com.algaworks.ecommerce.listener.GenericoListener;
+import com.algaworks.ecommerce.listener.GerarNotaFiscalListener;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+import org.hibernate.engine.spi.PersistentAttributeInterceptable;
+import org.hibernate.engine.spi.PersistentAttributeInterceptor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-
-import com.algaworks.ecommerce.listener.GenericoListener;
-import com.algaworks.ecommerce.listener.GerarNotaFiscalListener;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-@EntityListeners({GerarNotaFiscalListener.class, GenericoListener.class})
-@Entity
 @Getter
 @Setter
+@EntityListeners({ GerarNotaFiscalListener.class, GenericoListener.class })
+@Entity
 @Table(name = "pedido")
-@ToString
-public class Pedido extends EntitadeBaseInteger {
+public class Pedido extends EntidadeBaseInteger
+        implements PersistentAttributeInterceptable
+{
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "cliente_id", nullable = false, foreignKey = @ForeignKey(name ="fk_pedido_cliente"))
+    @NotNull
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_pedido_cliente"))
     private Cliente cliente;
 
+    @NotEmpty
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
 
+    @PastOrPresent
+    @NotNull
     @Column(name = "data_criacao", updatable = false, nullable = false)
     private LocalDateTime dataCriacao;
 
+    @PastOrPresent
     @Column(name = "data_ultima_atualizacao", insertable = false)
     private LocalDateTime dataUltimaAtualizacao;
 
+    @PastOrPresent
     @Column(name = "data_conclusao")
     private LocalDateTime dataConclusao;
 
-    @OneToOne(mappedBy = "pedido")
+    @LazyToOne(LazyToOneOption.NO_PROXY)
+    @OneToOne(mappedBy = "pedido", fetch = FetchType.LAZY)
     private NotaFiscal notaFiscal;
 
-    @Column(precision = 19, scale = 2, nullable = false)
+    @NotNull
+    @Positive
+    @Column(nullable = false)
     private BigDecimal total;
 
-    @Column(length =  30, nullable = false)
+    @NotNull
+    @Column(length = 30, nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
 
-    @OneToOne(mappedBy = "pedido")
+    @LazyToOne(LazyToOneOption.NO_PROXY)
+    @OneToOne(mappedBy = "pedido", fetch = FetchType.LAZY)
     private Pagamento pagamento;
 
     @Embedded
-    private EnderecoEntregaPedido enderecoEntregaPedido;
+    private EnderecoEntregaPedido enderecoEntrega;
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @Transient
+    private PersistentAttributeInterceptor persistentAttributeInterceptor;
+
+    public NotaFiscal getNotaFiscal() {
+        if (this.persistentAttributeInterceptor != null) {
+            return (NotaFiscal) persistentAttributeInterceptor
+                    .readObject(this, "notaFiscal", this. notaFiscal);
+        }
+
+        return this.notaFiscal;
+    }
+
+    public void setNotaFiscal(NotaFiscal notaFiscal) {
+        if (this.persistentAttributeInterceptor != null) {
+            this.notaFiscal = (NotaFiscal) persistentAttributeInterceptor
+                    .writeObject(this, "notaFiscal", this.notaFiscal, notaFiscal);
+        } else {
+            this.notaFiscal = notaFiscal;
+        }
+    }
+
+    public Pagamento getPagamento() {
+        if (this.persistentAttributeInterceptor != null) {
+            return (Pagamento) persistentAttributeInterceptor
+                    .readObject(this, "pagamento", this.pagamento);
+        }
+
+        return this.pagamento;
+    }
+
+    public void setPagamento(Pagamento pagamento) {
+        if (this.persistentAttributeInterceptor != null) {
+            this.pagamento = (Pagamento) persistentAttributeInterceptor
+                    .writeObject(this, "pagamento", this.pagamento, pagamento);
+        } else {
+            this.pagamento = pagamento;
+        }
+    }
+
+    @Override
+    public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
+        return this.persistentAttributeInterceptor;
+    }
+
+    @Override
+    public void $$_hibernate_setInterceptor(PersistentAttributeInterceptor persistentAttributeInterceptor) {
+        this.persistentAttributeInterceptor = persistentAttributeInterceptor;
+    }
+
+    public boolean isPago() {
+        return StatusPedido.PAGO.equals(status);
+    }
 
 //    @PrePersist
 //    @PreUpdate
     public void calcularTotal() {
         if (itens != null) {
-            total = itens.stream().map(i -> new BigDecimal(i.getQuantidade()).multiply(i.getPrecoProduto()))
+            total = itens.stream().map(
+                        i -> new BigDecimal(i.getQuantidade()).multiply(i.getPrecoProduto()))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
-        	total = BigDecimal.ZERO;
+            total = BigDecimal.ZERO;
         }
     }
 
@@ -119,9 +175,4 @@ public class Pedido extends EntitadeBaseInteger {
     public void aoCarregar() {
         System.out.println("Após carregar o Pedido.");
     }
-    
-    public boolean isPago() {
-    	return this.getStatus().equals(StatusPedido.PAGO);
-    }
-	
 }

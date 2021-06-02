@@ -13,13 +13,31 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>5.4.10.Final</version>
 		</dependency>
-		
-		 <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.4.10.Final</version>
-            <scope>provided</scope>
-        </dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>5.4.10.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-hikaricp</artifactId>
+			<version>5.4.10.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.1.0.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
@@ -34,12 +52,12 @@
 			<scope>test</scope>
 		</dependency>
 
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>1.18.20</version>
-				<scope>provided</scope>
-			</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.20</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

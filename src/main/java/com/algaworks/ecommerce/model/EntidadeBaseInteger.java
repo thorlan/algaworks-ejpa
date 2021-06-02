@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class EntitadeBaseInteger {
+public class EntidadeBaseInteger {
 
 	@EqualsAndHashCode.Include
 	@Id

@@ -24,6 +24,7 @@ import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -40,8 +41,9 @@ import lombok.Setter;
 @Table(name = "cliente", uniqueConstraints = {
 		@UniqueConstraint(name = "unq_cpf", columnNames = { "cpf" }) }, indexes = {
 				@Index(name = "idx_nome", columnList = "nome") })
-public class Cliente extends EntitadeBaseInteger {
+public class Cliente extends EntidadeBaseInteger {
 
+	@NotBlank
 	@Column(length = 100, nullable = false)
 	private String nome;
 

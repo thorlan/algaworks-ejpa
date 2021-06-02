@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "estoque")
-public class Estoque extends EntitadeBaseInteger{
+public class Estoque extends EntidadeBaseInteger{
 	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "produto_id", nullable = false, foreignKey = @ForeignKey(name ="fk_estoque_produto"))

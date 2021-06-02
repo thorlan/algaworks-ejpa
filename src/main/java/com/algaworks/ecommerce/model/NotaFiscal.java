@@ -20,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "nota_fiscal")
-public class NotaFiscal extends EntitadeBaseInteger{
+public class NotaFiscal extends EntidadeBaseInteger{
 	
 	@MapsId
 	@OneToOne(optional = false)
