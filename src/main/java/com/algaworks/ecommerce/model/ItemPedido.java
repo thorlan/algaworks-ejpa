@@ -13,6 +13,7 @@ import javax.persistence.MapsId;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.SqlResultSetMappings;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,6 +32,9 @@ public class ItemPedido {
 	
 	@EmbeddedId
 	private ItemPedidoId id;
+	
+	@Version
+	private Integer versao;
 	
 	@MapsId("pedidoId")
 	@ManyToOne(optional = false)

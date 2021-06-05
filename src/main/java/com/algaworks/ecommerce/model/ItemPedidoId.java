@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Version;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -31,4 +32,5 @@ public class ItemPedidoId implements Serializable {
 	@EqualsAndHashCode.Include
 	@Column(name = "produto_id")
 	private Integer produtoId;
+	
 }
