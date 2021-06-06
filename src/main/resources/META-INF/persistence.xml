@@ -24,21 +24,9 @@
 			<property name="javax.persistence.jdbc.password"
 				value="thiago!23" />
 
-			<property name="hibernate.hikari.maximumPoolSize" value="16" />
-			<property name="hibernate.connection.provider_class"
-				value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider" />
-
-			<property name="hibernate.cache.region.factory_class"
-				value="org.hibernate.cache.jcache.internal.JCacheRegionFactory" />
-			<property name="hibernate.javax.cache.provider"
-				value="org.ehcache.jsr107.EhcacheCachingProvider" />
-			<property name="hibernate.javax.cache.uri"
-				value="META-INF/ehcache.xml" />
-
-
 			<property
 				name="javax.persistence.schema-generation.database.action"
-				value="drop-and-create" />
+				value="none" />
 
 			<property
 				name="javax.persistence.schema-generation.create-source"
@@ -70,8 +58,35 @@
 			<property name="hibernate.dialect"
 				value="org.hibernate.dialect.MySQL8Dialect" />
 
+			<!-- AQUI QUE CONFIGURA O MULTITENANCY -->
+			<!-- <property name="hibernate.multiTenancy" value="SCHEMA" /> -->
+			<property name="hibernate.multiTenancy" value="DATABASE" />
+
+
+			<property name="hibernate.tenant_identifier_resolver"
+				value="com.algaworks.ecommerce.hibernate.EcmCurrentTenantIdentifierResolver" />
+
+
+			<!-- <property name="hibernate.multi_tenant_connection_provider" value="com.algaworks.ecommerce.hibernate.EcmSchemaMultiTenantConnectionProvider"/> -->
+			
+			<property name="hibernate.multi_tenant_connection_provider"
+				value="com.algaworks.ecommerce.hibernate.EcmMachineMultiTenantConnectionProvider" />
+				
+			<!-- fim multitenancy config -->
+
+			<property name="hibernate.hikari.maximumPoolSize" value="8" />
+			<property name="hibernate.connection.provider_class"
+				value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider" />
+
+			<property name="hibernate.cache.region.factory_class"
+				value="org.hibernate.cache.jcache.internal.JCacheRegionFactory" />
+			<property name="hibernate.javax.cache.provider"
+				value="org.ehcache.jsr107.EhcacheCachingProvider" />
+			<property name="hibernate.javax.cache.uri"
+				value="META-INF/ehcache.xml" />
+
 			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.format_sql" value="false" />
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -9,34 +9,17 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-public class EntityManagerTest {
+public class EntityManagerTest extends EntityManagerFactoryTest {
 
-	protected static EntityManagerFactory entityManagerFactory;
+    protected EntityManager em;
 
-	protected EntityManager em;
+    @Before
+    public void setUp() {
+        em = entityManagerFactory.createEntityManager();
+    }
 
-	// uma vez na classe, ao iniciar
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		entityManagerFactory = Persistence.createEntityManagerFactory("Ecommerce-PU");
-	}
-
-	// uma vez na classe, ao terminar
-	@AfterClass
-	public static void tearDownAfterClass() {
-		entityManagerFactory.close();
-	}
-
-	// antes de cada teste
-	@Before
-	public void setUp() {
-		em = entityManagerFactory.createEntityManager();
-	}
-
-	// após de cada teste
-	@After
-	public void tearDown() {
-		em.close();
-	}
-	
+    @After
+    public void tearDown() {
+        em.close();
+    }
 }
