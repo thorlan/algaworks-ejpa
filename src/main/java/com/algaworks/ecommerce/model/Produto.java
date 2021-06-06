@@ -8,6 +8,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+
+import org.hibernate.annotations.Type;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -61,6 +64,7 @@ public class Produto extends EntidadeBaseInteger {
 	private BigDecimal preco;
 
 	@Lob
+	//@Type(type="org.hibernate.type.BinaryType") POSSGRES É ASSIM
 	private byte[] foto;
 
 	@Convert(converter = BooleanToSimNaoConverter.class)
